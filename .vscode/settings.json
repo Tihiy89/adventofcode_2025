@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.wml": "html",
+    "iosfwd": "cpp",
+    "type_traits": "cpp",
+    "vector": "cpp",
+    "xiosbase": "cpp",
+    "xstring": "cpp",
+    "ostream": "cpp"
+  }
+}
