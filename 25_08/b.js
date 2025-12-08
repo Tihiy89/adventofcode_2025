@@ -1,5 +1,5 @@
 import { input_a as input_a } from "./input.js";
-console.time("part A");
+console.time("part B");
 
 // const steps = 1000;
 const group_calc = 3;
@@ -64,5 +64,5 @@ groups.sort((a, b) => b.length - a.length);
 const [, last_a, last_b] = distance[step - 1];
 const res = map[last_a][0] * map[last_b][0];
 
-console.log("A", res);
-console.timeEnd("part A");
+console.log("B", res);
+console.timeEnd("part B");
