@@ -1,5 +1,7 @@
-import { input_a as input } from "./input.js";
+import { input_a_mini as input } from "./input_test.js";
 console.time("part A");
+
+const TEST = true;
 
 const redPoints = input()
   .split("\n")
@@ -49,10 +51,15 @@ redS.sort((a, b) => b[3] - a[3]);
 const greenPoints = [];
 const validPoints = [];
 // рисуем зеленые грани
-console.time("calc green edges");
+console.log("calc green edges");
 
 // вертикальное направление
 let dMvert;
+
+if (TEST) {
+  let map = Array(maxRow + 1).fill([]);
+  map = map.map((i) => Array(maxCol + 1).fill("."));
+}
 
 for (let ii = 0; ii < redPoints.length; ii++) {
   const a = redPoints[ii];
@@ -63,10 +70,16 @@ for (let ii = 0; ii < redPoints.length; ii++) {
   a[2] = dMvert;
   b[2] = dMvert;
   validPoints.push([...a, "red", ...dM, "v", dMvert]);
+  if (TEST) {
+    map[a[0]][a[1]] = "#";
+  }
   let point = addMatrix(a, dM);
   while (!comparePoint(point, b)) {
     greenPoints.push(point);
     validPoints.push([...point, 0, "green", ...dM, "v", 0]);
+    if (TEST) {
+      map[point[0]][point[1]] = "X";
+    }
     point = addMatrix(point, dM);
   }
 }
@@ -234,7 +247,10 @@ while (res == 0) {
   console.log("checkRect", i);
 
   const valid = checkRect(redPoints[redS[i][1]], redPoints[redS[i][2]]);
-  res = valid ? redS[i][3] : 0;
+  if (valid) {
+    res = redS[i][3];
+    console.log("finded", redS[i]);
+  }
   i++;
 }
 
