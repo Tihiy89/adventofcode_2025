@@ -1,4 +1,4 @@
-import { input_a as input } from './input.js';
+import { input_a_mini as input } from './input.js';
 console.time('part A');
 
 const matrix = input()
@@ -10,7 +10,15 @@ const matrix = input()
     let buttons = t.slice(1, t.length - 1);
     buttons = buttons.map((b) => parseBbuttons(b, j.length));
 
-    return [buttons, j];
+    buttons.push(j);
+    const bn = [];
+    for (let i = 0; i < buttons.length; i++) {
+      for (let j = 0; j < buttons[i].length; j++) {
+        bn[j] = bn[j] ?? [];
+        bn[j][i] = buttons[i][j];
+      }
+    }
+    return [bn, j];
   });
 
 function parseJoltage(s) {
@@ -58,41 +66,53 @@ function calcButtonMax(buttons, valid) {
 
   return max_i;
 }
+
+function normalizeRow(_m, _row, _col) {
+  const del = _m[_row][_col];
+
+  if (del == 0 || del == 1) {
+    return;
+  }
+  for (let i = 0; i < _m[_row].length; i++) {
+    _m[_row][i] = _m[_row][i] / del;
+  }
+}
+
+function sumRow(_m, _r_dest, _r_src, _k) {
+  for (let i = 0; i < _m[_r_dest].length; i++) {
+    _m[_r_dest][i] += _k * _m[_r_src][i];
+  }
+}
+
+function swapRow(_m, r1, r2) {
+  [_m[r1], _m[r2]] = [_m[r2], _m[r1]];
+}
+
 const steps = matrix.map((matrix, ind) => {
-  let [buttons, validJ] = matrix;
-  const button_max = calcButtonMax(buttons, validJ);
+  let [m, validJ] = matrix;
 
-  const validJ_s = validJ.join('_');
-
-  const count = button_max.reduce((_c, i) => _c * i, 1);
-  const valid_calc = [];
-
-  for (let i = 0; i < count; i++) {
-    if (i % 100000 == 0) console.log(ind, ` calc ${i}/${count}`);
-    let ti = i;
-
-    const v = button_max.reduce((_v, bm, ind) => {
-      const _t = ti % bm;
-      ti = (ti - _t) / bm;
-      _v.push(_t);
-
-      return _v;
-    }, []);
-
-    const comb = v;
-    const res = calcJoltage(buttons, comb, validJ);
-    const vvvv = validJ.find((el, iel) => el != res[iel]) == undefined;
-
-    if (vvvv) {
-      valid_calc.push(comb);
+  for (let _c = 0; _c < m[0].length - 1; _c++) {
+    let _r = 0;
+    for (_r = _c; _r < m.length; _r++) {
+      if (m[_r][_c] != 0) {
+        break;
+      }
     }
+    if (_c != _r) {
+      swapRow(m, _c, _r);
+    }
+    normalizeRow(m, _c, _c);
+    for (let _r = 0; _r < m.length; _r++) {
+      if (_r == _c) {
+        continue;
+      }
+      sumRow(m, _r, _c, -m[_r][_c]);
+    }
+
+    //
   }
 
-  const s = valid_calc
-    .map((variant) => variant.reduce((sum, el) => sum + el, 0))
-    .sort((b, a) => b - a);
-
-  return s[0];
+  return 0;
 });
 
 const b = steps.reduce((_s, i) => _s + i, 0);
