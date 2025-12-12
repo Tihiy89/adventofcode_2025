@@ -1,10 +1,10 @@
-import { input_a_mini as input } from './input.js';
-console.time('part A');
+import { input_a_mini as input } from "./input.js";
+console.time("part A");
 
 const matrix = input()
-  .split('\n')
+  .split("\n")
   .map((i) => {
-    const t = i.split(' ');
+    const t = i.split(" ");
 
     const j = parseJoltage(t[t.length - 1]);
     let buttons = t.slice(1, t.length - 1);
@@ -23,14 +23,14 @@ const matrix = input()
 
 function parseJoltage(s) {
   return s
-    .replace(/[\{\}]/g, '')
-    .split(',')
+    .replace(/[\{\}]/g, "")
+    .split(",")
     .map((i) => +i);
 }
 
 function parseBbuttons(b, _size) {
   const arr = Array(_size).fill(0);
-  const ind = b.replace(/[\(\)]/g, '').split(',');
+  const ind = b.replace(/[\(\)]/g, "").split(",");
   ind.map((i) => {
     arr[i] = 1;
   });
@@ -38,33 +38,29 @@ function parseBbuttons(b, _size) {
   return arr;
 }
 
-function calcJoltage(buttons, comb, value) {
-  const res = Array(value.length).fill(0);
-  for (let iv = 0; iv < value.length; iv++) {
-    comb.map((item, ind) => {
-      res[iv] += buttons[ind][iv] * item;
-    });
+function matrixRotate(_m) {
+  const res = [];
+  for (let _r = 0; _r < _m.length; _r++) {
+    for (let _c = 0; _c < _m[_r].length; _c++) {
+      res[_c] = res[_c] ?? [];
+      res[_c][_r] = _m[_r][_c];
+    }
   }
-
   return res;
 }
 
-function calcButtonMax(buttons, valid) {
-  const max_i = buttons.map((button) => {
-    let stop = false;
-    let i = 0;
-    while (!stop) {
-      i++;
-      button.map((el, elInd) => {
-        if (el * i > valid[elInd]) {
-          stop = true;
-        }
-      });
-    }
-    return i;
-  });
+function getMatrixForCalc(_m) {
+  const _mr = matrixRotate(_m);
 
-  return max_i;
+  const N = _m[0].length;
+  for (let i = 0; i < 2 ** N; i++) {
+    const mask = i.toString(2).split("");
+    if (mask.filter((item) => +item == 1).length !== N) {
+      continue;
+    }
+
+    continue;
+  }
 }
 
 function normalizeRow(_m, _row, _col) {
@@ -91,7 +87,9 @@ function swapRow(_m, r1, r2) {
 const steps = matrix.map((matrix, ind) => {
   let [m, validJ] = matrix;
 
-  for (let _c = 0; _c < m[0].length - 1; _c++) {
+  const m_arr = getMatrixForCalc(m);
+
+  for (let _c = 0; _c < m.length; _c++) {
     let _r = 0;
     for (_r = _c; _r < m.length; _r++) {
       if (m[_r][_c] != 0) {
@@ -117,5 +115,5 @@ const steps = matrix.map((matrix, ind) => {
 
 const b = steps.reduce((_s, i) => _s + i, 0);
 
-console.log('A', b);
-console.timeEnd('part A');
+console.log("A", b);
+console.timeEnd("part A");
